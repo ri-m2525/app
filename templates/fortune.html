@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>今日の運勢</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            background-color: #3b2b2b;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .fortune {
+            width: 500px;
+            margin: 100px auto;
+            padding: 40px;
+
+            background-color: #fffaf0;
+            color: #333;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            color: #8e44ad;
+        }
+
+        .result {
+            font-size: 60px;
+            font-weight: bold;
+            color: #e67e22;
+            margin: 30px;
+        }
+
+        .item {
+            font-size: 20px;
+            margin: 15px;
+        }
+
+        .back {
+            display: inline-block;
+
+            margin-top: 30px;
+            padding: 12px 30px;
+
+            background-color: #555;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .back:hover {
+            background-color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="fortune">
+
+        <h1>🔮 今日の運勢</h1>
+
+        <div class="result">
+            {{ result }}
+        </div>
+
+        <div class="item">
+            🎨 ラッキーカラー：{{ color }}
+        </div>
+
+        <div class="item">
+            🍀 ラッキーアイテム：{{ item }}
+        </div>
+
+        <a href="/" class="back">
+            ← 時間割に戻る
+        </a>
+
+    </div>
+
+</body>
+
+</html>

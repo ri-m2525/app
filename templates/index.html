@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時間割アプリ</title>
+</head>
+
+    <style>
+
+        body {
+            margin: 0;
+            background-color: #3b2b2b;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 900px;
+            margin: 30px auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        /* カレンダー */
+
+        .calendar {
+            background-color: #fffaf0;
+            color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calendar-header h2 {
+            margin: 0;
+        }
+
+        .calendar-header button {
+            font-size: 30px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .weekdays,
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .weekdays div {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        .days div {
+            min-height: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .days div:hover {
+            background-color: #eee;
+        }
+
+        .sunday {
+            color: #d33;
+        }
+
+        .saturday {
+            color: #36c;
+        }
+
+        .today {
+            background-color: #ffe08a;
+            font-weight: bold;
+        }
+
+        /* 時計 */
+
+        #clock {
+            text-align: center;
+            font-size: 40px;
+            margin: 25px;
+        }
+
+        /* 時間割 */
+
+        #schedule {
+            background-color: #2b2020;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .schedule-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .fortune-button {
+            display: block;
+            width: 250px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #8e44ad;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        .fortune-button:hover {
+            background-color: #9b59b6;
+     }
+
+    /* 時間割編集 */
+
+    #edit-schedule {
+        background-color: #fffaf0;
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    .day-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .day-buttons button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #8e44ad;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .day-buttons button:hover {
+        background-color: #9b59b6;
+    }
+
+    .subject-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .subject-row label {
+        width: 60px;
+        font-weight: bold;
+    }
+
+    .subject-row input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .save-button {
+        display: block;
+        margin: 20px auto 0;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        background-color: #27ae60;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .save-button:hover {
+        background-color: #2ecc71;
+    }  
+
+    /* 予定 */
+
+    .event-area {
+        background-color: #fffaf0;
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    .event-area h2 {
+        margin-top: 0;
+    }
+
+    #event-list {
+        margin-bottom: 15px;
+    }
+
+    .event-item {
+        background-color: #eee;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    .event-area input[type="text"] {
+        padding: 10px;
+        width: 60%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .event-area button {
+        padding: 10px 15px;
+        background-color: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .event-area button:hover {
+        background-color: #2ecc71;
+    }
+
+    .calendar-event {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    /* スマホ対応 */
+    @media (max-width: 600px) {
+
+        .container {
+            width: auto;
+            margin: 15px 10px;
+        }
+
+        h1 {
+            font-size: 26px;
+        }
+
+        .calendar {
+            padding: 10px;
+        }
+
+        .weekdays div {
+            padding: 6px 2px;
+            font-size: 13px;
+        }
+
+        .days div {
+            min-height: 50px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        #clock {
+            font-size: 32px;
+            margin: 20px 0;
+        }
+
+        #schedule {
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .schedule-title {
+            font-size: 21px;
+        }
+
+        #edit-schedule {
+            padding: 15px;
+        }
+
+        .day-buttons {
+            gap: 5px;
+        }
+
+        .day-buttons button {
+            padding: 10px 5px;
+            font-size: 14px;
+        }
+
+        .subject-row {
+            gap: 5px;
+        }
+
+        .subject-row label {
+            width: 50px;
+            font-size: 14px;
+        }
+
+        .subject-row input {
+            min-width: 0;
+            padding: 9px;
+            font-size: 16px;
+        }
+
+        .event-area {
+            padding: 15px;
+        }
+
+        .event-area input[type="text"] {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+        }
+
+        .event-area button {
+            width: 100%;
+        }
+
+        .fortune-button {
+            width: auto;
+            margin: 20px 0;
+        }
+
+    }
+
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>時間割アプリ</title>
+   
+    <style>
+
+        
+    </style>
+
+<body>
+
+<div class="container">
+
+    <h1>時間割アプリ</h1>
+
+
+    <!-- カレンダー -->
+
+    <div class="calendar">
+
+        <div class="calendar-header">
+
+            <button onclick="previousMonth()">‹</button>
+
+            <h2 id="month-title"></h2>
+
+            <button onclick="nextMonth()">›</button>
+
+        </div>
+
+
+        <div class="weekdays">
+
+            <div class="sunday">日</div>
+            <div>月</div>
+            <div>火</div>
+            <div>水</div>
+            <div>木</div>
+            <div>金</div>
+            <div class="saturday">土</div>
+
+        </div>
+
+
+        <div class="days" id="days"></div>
+
+    </div>
+
+    <!-- 予定 -->
+
+    <div class="event-area">
+
+        <h2 id="selected-date">
+            今日の予定
+        </h2>
+
+        <div id="event-list"></div>
+
+        <form id="event-form">
+
+            <input
+                type="hidden"
+                id="event-date"
+            >
+
+            <input
+                type="text"
+                id="event-title"
+                placeholder="予定を入力"
+                required
+            >
+
+            <button type="submit">
+                予定を追加
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- 時計 -->
+
+    <div id="clock">
+        00:00:00
+    </div>
+
+
+    <!-- 時間割 -->
+
+    <div id="schedule">
+
+        <div class="schedule-title">
+            今日の時間割
+        </div>
+
+    </div>
+
+    <!-- 時間割編集 -->
+
+    <div id="edit-schedule">
+
+        <div class="schedule-title">
+            時間割を編集
+        </div>
+
+        <div class="day-buttons">
+            <button onclick="selectDay('月')">月</button>
+            <button onclick="selectDay('火')">火</button>
+            <button onclick="selectDay('水')">水</button>
+            <button onclick="selectDay('木')">木</button>
+            <button onclick="selectDay('金')">金</button>
+        </div>
+
+        <div id="subject-inputs"></div>
+
+        <button class="save-button" onclick="saveSchedule()">
+            💾 時間割を保存
+        </button>
+
+    </div>
+
+    <a href="/fortune" class="fortune-button">
+            🔮 今日の運勢
+        </a>
+
+
+</div>
+
+
+<script>
+
+    // Flaskから時間割を受け取る
+    const schedule = {{ sch | tojson }};
+
+    let events = {{ events | tojson }};
+
+    let subjects = {{ subjects | tojson }};
+
+    // =========================
+    // カレンダー
+    // =========================
+
+    const today = new Date();
+
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth();
+
+
+    function createCalendar() {
+
+        const title =
+            document.getElementById("month-title");
+
+        const days =
+            document.getElementById("days");
+
+
+        title.textContent =
+            `${currentYear}年 ${currentMonth + 1}月`;
+
+
+        days.innerHTML = "";
+
+
+        // 1日の曜日
+
+        const firstDay =
+            new Date(
+                currentYear,
+                currentMonth,
+                1
+            ).getDay();
+
+
+        // 月の日数
+
+        const lastDate =
+            new Date(
+                currentYear,
+                currentMonth + 1,
+                0
+            ).getDate();
+
+
+        // 空白
+
+        for (let i = 0; i < firstDay; i++) {
+
+            const empty =
+                document.createElement("div");
+
+            days.appendChild(empty);
+
+        }
+
+
+        // 日付
+
+        for (let date = 1; date <= lastDate; date++) {
+
+            const cell =
+                document.createElement("div");
+
+            
+            const dateNumber =
+                document.createElement("div");
+
+            dateNumber.textContent = date;
+
+            cell.appendChild(dateNumber);
+
+
+            // 日付文字列
+            const dateString =
+                `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+
+
+            // 予定を確認
+            const dayEvents =
+                events.filter(
+                    event => event[1] === dateString
+                );
+
+            // 予定があれば表示
+            if (dayEvents.length > 0) {
+
+                const eventMark =
+                    document.createElement("div");
+
+                    eventMark.className =
+                        "calendar-event";
+
+                    eventMark.textContent =
+                        `● 予定${dayEvents.length}件`;
+
+                    cell.appendChild(eventMark);
+
+            }
+
+            const dayOfWeek =
+                new Date(
+                    currentYear,
+                    currentMonth,
+                    date
+                ).getDay();
+
+
+            if (dayOfWeek === 0) {
+                cell.classList.add("sunday");
+            }
+
+
+            if (dayOfWeek === 6) {
+                cell.classList.add("saturday");
+            }
+
+
+            // 今日
+
+            if (
+                currentYear === today.getFullYear() &&
+                currentMonth === today.getMonth() &&
+                date === today.getDate()
+            ) {
+
+                cell.classList.add("today");
+
+            }
+
+            // 日付をクリックしたとき
+            cell.onclick = function() {
+
+                showEvents(
+                    currentYear,
+                    currentMonth,
+                    date
+                );
+
+            };
+
+
+            days.appendChild(cell);
+
+        }
+
+    }
+
+    // =========================
+    // 予定表示
+    // =========================
+
+    function showEvents(year, month, date) {
+
+        const dateString =
+            `${year}-${String(month + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+
+
+        // 選択した日付を保存
+        document.getElementById("event-date").value =
+            dateString;
+
+
+        // タイトルを変更
+        document.getElementById("selected-date").textContent =
+            `${year}年${month + 1}月${date}日の予定`;
+
+
+        // 予定表示場所
+        const list =
+            document.getElementById("event-list");
+
+        list.innerHTML = "";
+
+
+        // 選択した日の予定だけ取得
+        const todayEvents =
+            events.filter(
+                event => event[1] === dateString
+            );
+
+
+        // 予定がない場合
+        if (todayEvents.length === 0) {
+
+            list.innerHTML =
+                "<p>予定はありません</p>";
+
+            return;
+        }
+
+
+        // 予定を表示
+        for (const event of todayEvents) {
+
+            list.innerHTML += `
+                <div class="event-item">
+                    ${event[2]}
+ 
+                    <a href="/delete_event/${event[0]}">
+                        🗑️ 削除
+                    </a>
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    // 前月
+
+    function previousMonth() {
+
+        currentMonth--;
+
+        if (currentMonth < 0) {
+
+            currentMonth = 11;
+            currentYear--;
+
+        }
+
+        createCalendar();
+
+    }
+
+
+    // 次月
+
+    function nextMonth() {
+
+        currentMonth++;
+
+        if (currentMonth > 11) {
+
+            currentMonth = 0;
+            currentYear++;
+
+        }
+
+        createCalendar();
+
+    }
+
+
+    // =========================
+    // 時計＋時間割
+    // =========================
+
+    function execute() {
+
+        const now = new Date();
+
+
+        // 時計
+
+        const h =
+            String(now.getHours()).padStart(2, "0");
+
+        const m =
+            String(now.getMinutes()).padStart(2, "0");
+
+        const s =
+            String(now.getSeconds()).padStart(2, "0");
+
+
+        document.getElementById("clock").textContent =
+            `${h}:${m}:${s}`;
+
+        
+
+        // =========================
+    // 今日の曜日
+    // =========================
+
+        const weekDays = [
+            "日",
+            "月",
+            "火",
+            "水",
+            "木",
+            "金",
+            "土"
+        ];
+
+        const todayName =
+            weekDays[now.getDay()];
+
+    
+
+
+        // 時間割
+
+        let txt =
+            '<div class="schedule-title">今日の時間割</div>';
+
+
+        for (const item of schedule) {
+
+            const periodName = item[0];
+            const hour = item[1];
+            const minute = item[2];
+
+            // 昼休み
+            if (periodName === "昼休み") {
+
+                txt +=
+                    `${periodName}【${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}】　---<br>`;
+
+                continue;
+            }
+
+            // 今日の科目名を取得
+            let subject = "未設定";
+
+            if (
+                subjects[todayName] &&
+                subjects[todayName][periodName]
+            ) {
+
+                subject =
+                    subjects[todayName][periodName];
+
+            }
+
+
+            // 授業開始時間
+
+            const target =
+                new Date(now);
+
+            target.setHours(
+                hour,
+                minute,
+                0,
+                0
+            );
+
+
+            // あと何秒か
+
+            const diff =
+                target - now;
+
+
+            if (diff > 0) {
+
+                const totalSeconds =
+                    Math.floor(diff / 1000);
+
+
+                const dh =
+                    Math.floor(totalSeconds / 3600);
+
+
+                const dm =
+                    Math.floor(
+                        (totalSeconds % 3600) / 60
+                    );
+
+
+                const ds =
+                    totalSeconds % 60;
+
+
+                txt +=
+                    `${periodName}【${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}】` +
+                    `${subject}　あと${dh}:${String(dm).padStart(2, "0")}:${String(ds).padStart(2, "0")}です。<br>`;
+
+            } else {
+
+                txt +=
+                    `${periodName}【${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}】`+
+                    `${subject} ---<br>`;
+
+            }
+
+        }
+
+
+        document.getElementById("schedule").innerHTML =
+            txt;
+
+    }
+
+    // =========================
+    // 時間割編集
+    // =========================
+
+    // 現在選択している曜日
+    let selectedDay = "月";
+
+
+    // 曜日を選択
+    function selectDay(day) {
+
+        selectedDay = day;
+
+        createSubjectInputs();
+
+    }
+
+
+    // 入力欄を作成
+    function createSubjectInputs() {
+
+        const container =
+            document.getElementById("subject-inputs");
+
+        container.innerHTML = "";
+
+
+        for (let i = 0; i < schedule.length; i++) {
+
+            const item = schedule[i];
+
+            const periodName = item[0];
+
+
+            // 昼休みは入力しない
+            if (periodName === "昼休み") {
+                continue;
+            }
+
+
+            const row =
+                document.createElement("div");
+
+            row.className = "subject-row";
+
+
+            const label =
+                document.createElement("label");
+
+            label.textContent = periodName;
+
+
+            const input =
+                document.createElement("input");
+
+            input.type = "text";
+
+            input.placeholder = "科目名を入力";
+
+
+            // 保存済みの科目名を表示
+            if (
+                subjects[selectedDay] &&
+                subjects[selectedDay][periodName]
+            ) {
+
+                input.value =
+                    subjects[selectedDay][periodName];
+
+            }
+
+
+            input.dataset.period = periodName;
+
+
+            row.appendChild(label);
+            row.appendChild(input);
+
+            container.appendChild(row);
+
+        }
+
+   }
+
+
+   // 時間割を保存
+    function saveSchedule() {
+
+        const inputs =
+            document.querySelectorAll(
+                "#subject-inputs input"
+           );
+
+
+        if (!subjects[selectedDay]) {
+            subjects[selectedDay] = {};
+        }
+
+
+        inputs.forEach(function(input) {
+
+            const period =
+                input.dataset.period;
+
+            subjects[selectedDay][period] =
+                input.value;
+
+       });
+
+       fetch("/save_schedule", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(subjects)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success){
+                execute();
+
+                alert(
+                    selectedDay + "時間割を保存しました！"
+                );
+
+            }else{
+                alert(
+                    "時間割の保存に失敗しました。"
+                );
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert(
+                "時間割の保存中にエラーが発生しました。"
+            );
+        });
+
+    }
+
+    document.getElementById("event-form").addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        const date =
+            document.getElementById("event-date").value;
+
+        const title =
+            document.getElementById("event-title").value;
+
+
+        const formData = new FormData();
+
+        formData.append("date", date);
+        formData.append("title", title);
+
+
+        fetch("/add_event", {
+            method: "POST",
+            body: formData
+        })
+        .then(function() {
+
+            location.reload();
+
+        });
+
+    });
+
+
+    // =========================
+    // 起動
+    // =========================
+
+    createCalendar();
+
+
+
+    execute()
+
+    createSubjectInputs();
+
+    //今日の予定を表示
+
+    showEvents(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+    );
+
+
+    setInterval(execute, 500);
+
+</script>
+
+</body>
+
+</html>
